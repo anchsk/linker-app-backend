@@ -1,0 +1,47 @@
+{
+  "name": "linker-app-backend",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
+    "build:ui": "rm -rf build && cd ../linker-app-frontend && npm run build --prod && cp -r build ../linker-app-backend",
+    "deploy": "git push heroku master",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
+    "logs:prod": "heroku logs --tail",
+    "git:log": "git log --graph --oneline --decorate --all"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^7.8.1",
+    "eslint-plugin-sort-keys-fix": "^1.1.1",
+    "jest": "^26.4.2",
+    "nodemon": "^2.0.4",
+    "supertest": "^4.0.2"
+  },
+  "dependencies": {
+    "axios": "^0.20.0",
+    "bcrypt": "^5.0.0",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.2",
+    "domino": "^2.1.6",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-async-errors": "^3.1.1",
+    "helmet": "^4.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.3",
+    "mongoose-unique-validator": "^2.0.3",
+    "page-metadata-parser": "^1.1.4",
+    "validator": "^13.1.1"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}

@@ -1,0 +1,11 @@
+POST http://localhost:3001/api/links
+Content-Type: application/json
+Authorization: bearer (insert)
+
+{
+  "title": "",
+  "url": "",
+  "description": "",
+  "tags": [],
+  "collections": []
+}

@@ -1,0 +1,7 @@
+PUT http://localhost:3001/api/collections/(insert)
+Content-Type: application/json
+Authorization: bearer (insert)
+
+{
+ 
+}
