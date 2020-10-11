@@ -32,7 +32,7 @@ module.exports = {
       },
     ],
     'no-unused-vars': ['error', { argsIgnorePattern: '(req|res|next)' }],
-    'no-console': 0,
+    'no-console': 1,
     'sort-keys': 'error',
     'sort-keys-fix/sort-keys-fix': 'warn'
   },

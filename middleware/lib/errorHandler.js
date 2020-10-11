@@ -1,6 +1,6 @@
 const errorHandler = (error, req, res, next) => {
-  //console.log('errorHandler(start):')
   if (process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console
     console.error({ error })
   }
   if (error.name === 'CastError') {
