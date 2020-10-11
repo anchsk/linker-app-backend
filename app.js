@@ -9,7 +9,7 @@ const express = require('express')
 require('express-async-errors')
 const app = express()
 const rateLimit = require('express-rate-limit')
-//app.set('trust proxy', 1)
+app.set('trust proxy', 1)
 
 const cors = require('cors')
 const helmet = require('helmet')
