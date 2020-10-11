@@ -10,7 +10,7 @@
     "lint:fix": "eslint --fix .",
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
     "build:ui": "rm -rf build && cd ../linker-app-frontend && npm run build --prod && cp -r build ../linker-app-backend",
-    "deploy": "git push heroku master",
+    "deploy": "git push heroku main",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
     "logs:prod": "heroku logs --tail",
     "git:log": "git log --graph --oneline --decorate --all"
