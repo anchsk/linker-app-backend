@@ -8,8 +8,6 @@ const path = require('path')
 const express = require('express')
 require('express-async-errors')
 const app = express()
-const rateLimit = require('express-rate-limit')
-app.set('trust proxy', 1)
 
 const cors = require('cors')
 const helmet = require('helmet')
@@ -27,13 +25,6 @@ const frontendRouter = require('./routes/frontend')
 // database
 const mongoose = require('mongoose')
 
-//api limiter
-
- const apiLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000, // 1 minute
-  max: 10, // 10 requests
-  message: 'Too many requests, please try later',
-}) 
 
 /* - - - APP - - - */
 
@@ -61,6 +52,7 @@ const origin = {
 app.use(cors(origin))
 
 app.use(express.json())
+
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -79,8 +71,12 @@ app.use(express.static(path.join(__dirname, 'build')))
 app.use(middleware.requestLogger)
 app.use(middleware.tokenExtractor)
 
+// https://expressjs.com/en/guide/behind-proxies.html
+app.set('trust proxy', 1)
+
 // limit requests to all routes starting with /api/
-app.use('/api/', apiLimiter)
+app.use('/api/', middleware.apiLimiter)
+
 // routes
 app.use('/api/meta', metaRouter)
 
