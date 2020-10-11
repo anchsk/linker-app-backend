@@ -8,7 +8,7 @@ const path = require('path')
 const express = require('express')
 require('express-async-errors')
 const app = express()
-//const rateLimit = require('express-rate-limit')
+const rateLimit = require('express-rate-limit')
 //app.set('trust proxy', 1)
 
 const cors = require('cors')
@@ -29,11 +29,11 @@ const mongoose = require('mongoose')
 
 //api limiter
 
-/* const apiLimiter = rateLimit({
+ const apiLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
   max: 10, // 10 requests
   message: 'Too many requests, please try later',
-}) */
+}) 
 
 /* - - - APP - - - */
 
@@ -80,7 +80,7 @@ app.use(middleware.requestLogger)
 app.use(middleware.tokenExtractor)
 
 // limit requests to all routes starting with /api/
-//app.use('/api/', apiLimiter)
+app.use('/api/', apiLimiter)
 // routes
 app.use('/api/meta', metaRouter)
 
