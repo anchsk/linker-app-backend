@@ -60,74 +60,81 @@ const createNewCollection = async (req, res, next) => {
 const updateCollection = async (req, res, next) => {
   const collectionToUpdate = await Collection.findById(req.params.id)
 
-  if (collectionToUpdate.user.toString() === req.user.id) {
-    const updatedCollection = await Collection.findByIdAndUpdate(
-      req.params.id,
-      { ...req.body, updated_at: new Date() },
-      {
-        new: true,
-      }
-    )
-    res.status(200).json(updatedCollection)
-  } else {
-    res.status(401).send("User can't modify other users collections")
+  if (collectionToUpdate.user.toString() !== req.user.id) {
+    return res.status(401).send("User can't modify other users collections")
   }
+
+  const updatedCollection = await Collection.findByIdAndUpdate(
+    req.params.id,
+    { ...req.body, updated_at: new Date() },
+    {
+      new: true,
+    }
+  )
+  res.status(200).json(updatedCollection)
 }
 
 const deleteCollection = async (req, res, next) => {
   const user = await User.findById(req.user.id)
-  const collection = await Collection.findById(req.params.id)
+  const collectionToDelete = await Collection.findById(req.params.id)
 
-  if (collection.user.toString() === user.id.toString()) {
-    await Collection.findByIdAndRemove(req.params.id)
-
-    user.collections = user.collections.filter(
-      (c) => c.toString() !== req.params.id.toString()
-    )
-    await user.save()
-
-    // Remove links to collection from Links
-    await Link.updateMany(
-      {
-        collections: {
-          $in: req.params.id,
-        },
-      },
-      {
-        $pull: {
-          collections: collection._id,
-        },
-      }
-    )
-
-    res.status(204).end()
+  if (collectionToDelete.user.toString() !== req.user.id) {
+    return res.status(401).send("Can't delete other users' collections")
   }
+
+  await Collection.findByIdAndRemove(req.params.id)
+
+  user.collections = user.collections.filter(
+    (c) => c.toString() !== req.params.id.toString()
+  )
+  await user.save()
+
+  // Remove reference to collection from Link documents
+  await Link.updateMany(
+    {
+      collections: {
+        $in: req.params.id,
+      },
+    },
+    {
+      $pull: {
+        collections: collectionToDelete._id,
+      },
+    }
+  )
+
+  res.status(204).end()
 }
 
 // /collections/:id/links PUT
 const updateLinksInCollection = async (req, res, next) => {
   const collectionToUpdate = await Collection.findById(req.params.id).exec()
+
   if (collectionToUpdate.user.toString() !== req.user.id) {
     res.status(401).send("Can't edit other users' collections")
   }
 
   const collectionId = req.params.id
-  // req.body.links //final links that should be in collection
 
-  //console.log('collectionToUpdate.links', collectionToUpdate.links)
+  // req.body.links - [array of ids] - final links that should be in collection
+
+  // links refs in database [array of ObjectIds]
   const currentLinksRefs = collectionToUpdate.links
 
-  // find links to update
+  // in current links refs find links that are not present in new links refs
   let linksToRemove = currentLinksRefs.filter(
-    (ref) => !req.body.links.includes(ref)
+    (ref) => !req.body.links.includes(ref.toString())
   )
+
+  // in new links refs find links that are not present in old links refs
   let linksToAdd = req.body.links.filter(
-    (ref) => !currentLinksRefs.includes(ref)
+    (ref) => !currentLinksRefs.includes(new ObjectId(ref))
   )
 
   //console.log({ linksToAdd })
   //console.log({ linksToRemove })
 
+  // Add reference to collection in Link documents:
   if (linksToAdd.length !== 0) {
     await Link.updateMany(
       {
@@ -143,6 +150,7 @@ const updateLinksInCollection = async (req, res, next) => {
     )
   }
 
+  // Remove reference to collection in Link documents:
   if (linksToRemove.length !== 0) {
     await Link.updateMany(
       {
@@ -164,9 +172,6 @@ const updateLinksInCollection = async (req, res, next) => {
     { new: true }
   )
   res.status(200).json(updatedCollection)
-
-  // or add collection ref to link
-  // or remove collection ref from link
 }
 
 module.exports = {
