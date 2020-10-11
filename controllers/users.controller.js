@@ -19,11 +19,7 @@ const getUserByUsername = async (req, res, next) => {
       populate: { path: 'tags' },
     })
     .populate('collections')
-  if (foundUser) {
-    res.status(200).json(foundUser)
-  } else {
-    res.status(404).end()
-  }
+  res.status(200).json(foundUser)
 }
 
 const getUserById = async (req, res, next) => {
@@ -34,11 +30,8 @@ const getUserById = async (req, res, next) => {
       populate: { path: 'tags' },
     })
     .populate('collections')
-  if (!foundUser) {
-    res.status(404).send('Not Found')
-  } else {
-    res.status(200).json(foundUser)
-  }
+
+  res.status(200).json(foundUser)
 }
 
 const createNewUser = async (req, res, next) => {

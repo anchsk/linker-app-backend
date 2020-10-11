@@ -23,11 +23,8 @@ const getLinkById = async (req, res, next) => {
   const link = await Link.findById(req.params.id)
     .populate('tags')
     .populate('user')
-  if (link) {
-    res.status(200).json(link.toJSON())
-  } else {
-    res.status(404).end()
-  }
+  res.status(200).json(link.toJSON())
+
 }
 
 const createNewLink = async (req, res, next) => {

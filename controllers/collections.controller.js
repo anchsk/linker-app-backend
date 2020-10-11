@@ -21,11 +21,9 @@ const getCollectionById = async (req, res, next) => {
       ],
     })
     .populate('user', { name: 1, username: 1 })
-  if (collection) {
-    res.status(200).json(collection)
-  } else {
-    res.status(404).end()
-  }
+
+  res.status(200).json(collection)
+
 }
 
 const createNewCollection = async (req, res, next) => {
