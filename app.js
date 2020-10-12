@@ -25,7 +25,6 @@ const frontendRouter = require('./routes/frontend')
 // database
 const mongoose = require('mongoose')
 
-
 /* - - - APP - - - */
 
 // connect to database
@@ -75,7 +74,9 @@ app.use(middleware.tokenExtractor)
 app.set('trust proxy', 1)
 
 // limit requests to all routes starting with /api/
-app.use('/api/', middleware.apiLimiter)
+if (process.env.NODE_ENV === 'production') {
+  app.use('/api/', middleware.apiLimiter)
+}
 
 // routes
 app.use('/api/meta', metaRouter)
